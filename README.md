@@ -109,7 +109,17 @@ This allows for rapid experimentation and selection of optimal configurations
 for forecasting tasks.
 
 ---
+## 📄 Reference
 
+This code is based on the research:
+
+**Optimizing stock price forecasting: a hybrid approach using fuzziness and automated machine learning**  
+*Jan Timko, Radwa El Shawi, Stefania Tomasiello*  
+*Expert Systems with Applications*, Volume 259, 2025, 128844  
+
+[Read on ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0957417425024613)
+
+If you use this code in your research or projects, please cite the paper.
 
 ---
 
