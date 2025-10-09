@@ -29,8 +29,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/autofuzzts"
-Repository = "https://github.com/yourusername/autofuzzts"
+Homepage = "https://github.com/jtimko16/AutoFuzzTS"
+Repository = "https://github.com/jtimko16/AutoFuzzTS"
 
 [tool.setuptools.packages.find]
 exclude = ["tests*", "notebooks*", "schema*"]
