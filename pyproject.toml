@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "autofuzzts"
-version = "0.1.0"
+version = "0.1.1"
 description = "'Time series forecasting using fuzzy logic and AutoML'"
 readme = "README.md"
 license = { text = "MIT" }
@@ -29,8 +29,8 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/jtimko16/AutoFuzzTS"
-"Bug Tracker" = "https://github.com/jtimko16/AutoFuzzTS/issues"
+Homepage = "https://github.com/yourusername/autofuzzts"
+Repository = "https://github.com/yourusername/autofuzzts"
 
 [tool.setuptools.packages.find]
 exclude = ["tests*", "notebooks*", "schema*"]
