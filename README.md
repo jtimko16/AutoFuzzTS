@@ -53,7 +53,7 @@ print(f"Best configuration: {best_config}")
 
 **Example output:**
 ```
-Best configuration: {'n_clusters': 19, 'number_of_lags': 2, 'fuzzy_part_func': 'Triangle'}
+Best configuration: {'n_fuzzy_sets': 19, 'number_of_lags': 2, 'fuzzy_part_func': 'Triangle'}
 ```
 
 ---

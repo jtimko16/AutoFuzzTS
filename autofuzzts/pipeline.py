@@ -28,7 +28,7 @@ from sklearn.metrics import (
 
 # Example custom configuration
 custom_config = {
-    "n_clusters": 5,
+    "n_fuzzy_sets": 5,
     "verbosity": True,
 }
 
@@ -71,7 +71,7 @@ def train_val_pipeline(
 
     fp = FuzzyPartition(
         fuzzy_function=config["fuzzy_part_func"],
-        n_clusters=config["n_clusters"],
+        n_fuzzy_sets=config["n_fuzzy_sets"],
         sigma=config["sigma"],
         scaler=scaler_train,
         verbosity=config["verbosity"],
@@ -100,17 +100,17 @@ def train_val_pipeline(
         X_val = pd.concat([X_val, val_covariates], axis=1)
 
     model = FuzzyPipelineModel(
-        n_clusters=config["n_clusters"],
+        n_fuzzy_sets=config["n_fuzzy_sets"],
         number_of_lags=config["number_of_lags"],
         verbosity=config["verbosity"],
     )
 
     model.fit(X_train, y_train, model_type="xgb")
 
-    pred_cluster = model.predict(X_val)
+    pred_fuzzy_set = model.predict(X_val)
 
-    ## Convert prediction to crips number using center points of clusters
-    y_val_pred_center_point = [center_points_unscaled_test_val[i] for i in pred_cluster]
+    ## Convert prediction to crips number using center points of fuzzy sets
+    y_val_pred_center_point = [center_points_unscaled_test_val[i] for i in pred_fuzzy_set]
 
     ## Recalculate percentage difference to actual values
     y_val_pred = [None] * len(val_set)
@@ -175,7 +175,7 @@ def train_model(
 
     fp = FuzzyPartition(
         fuzzy_function=config["fuzzy_part_func"],
-        n_clusters=config["n_clusters"],
+        n_fuzzy_sets=config["n_fuzzy_sets"],
         sigma=config["sigma"],
         scaler=scaler_train,
         verbosity=config["verbosity"],
@@ -190,7 +190,7 @@ def train_model(
     )
 
     model_train = FuzzyPipelineModel(
-        n_clusters=config["n_clusters"],
+        n_fuzzy_sets=config["n_fuzzy_sets"],
         number_of_lags=config["number_of_lags"],
         verbosity=config["verbosity"],
     )
@@ -211,8 +211,8 @@ def tune_hyperparameters_bayes(
     def objective(trial):
         # Define search space based on your specifications
         config = {
-            "n_clusters": trial.suggest_int(
-                "n_clusters", 4, 40
+            "n_fuzzy_sets": trial.suggest_int(
+                "n_fuzzy_sets", 4, 40
             ),  # Number of fuzzy sets
             "number_of_lags": trial.suggest_int(
                 "number_of_lags", 1, 10
@@ -262,8 +262,8 @@ def tune_hyperparameters_bayes_Henon(
 ):
     def objective(trial):
         config = {
-            "n_clusters": trial.suggest_int(
-                "n_clusters", 2, 29
+            "n_fuzzy_sets": trial.suggest_int(
+                "n_fuzzy_sets", 2, 29
             ),  # Number of fuzzy sets
             "number_of_lags": trial.suggest_int("n_lags", 2, 5),  # Number of lags
             "fuzzy_part_func": trial.suggest_categorical(
@@ -307,7 +307,7 @@ def tune_hyperparameters_grid(
     # Define grid for Gaussian fuzzy function (includes 'sigma')
     grid_gauss = {
         "n_lags": [1, 3, 5, 7, 9],
-        "n_clusters": [4, 6, 8, 10, 12, 14, 16, 18, 20],
+        "n_fuzzy_sets": [4, 6, 8, 10, 12, 14, 16, 18, 20],
         "sigma": [0.1, 0.5, 1, 5, 9],
         "fuzzy_part_func": ["matrix_F_transform_gauss"],
     }
@@ -315,7 +315,7 @@ def tune_hyperparameters_grid(
     # Define grid for non-Gaussian fuzzy functions (excludes 'sigma')
     grid_non_gauss = {
         "n_lags": [1, 3, 5, 7, 9],
-        "n_clusters": [4, 6, 8, 10, 12, 14, 16, 18, 20],
+        "n_fuzzy_sets": [4, 6, 8, 10, 12, 14, 16, 18, 20],
         "sigma": [None],  # Set sigma to None for non-Gaussian functions
         "fuzzy_part_func": ["matrix_F_transform_cosine", "matrix_F_transform_triangle"],
     }
@@ -385,7 +385,7 @@ def fit_calibrate_predict(
     # Step 2: Fuzzy Partition for train, validation, and test sets
     fp = FuzzyPartition(
         fuzzy_function=config["fuzzy_part_func"],
-        n_clusters=config["n_clusters"],
+        n_fuzzy_sets=config["n_fuzzy_sets"],
         sigma=config["sigma"],
         scaler=scaler_train,
         verbosity=config["verbosity"],
@@ -422,7 +422,7 @@ def fit_calibrate_predict(
 
     # Step 3: Train the model on the combined train and validation set
     model = FuzzyPipelineModel(
-        n_clusters=config["n_clusters"],
+        n_fuzzy_sets=config["n_fuzzy_sets"],
         number_of_lags=config["number_of_lags"],
         verbosity=config["verbosity"],
     )
@@ -436,11 +436,11 @@ def fit_calibrate_predict(
         pass
 
     # Step 5: Make predictions and evaluate on the test set
-    y_test_pred_cluster = model.predict(X_test_final)
+    y_test_pred_fuzzy_set = model.predict(X_test_final)
 
-    ## Convert prediction to crips number using center points of clusters
+    ## Convert prediction to crips number using center points of fuzzy sets
     y_test_pred_center_point = [
-        center_points_unscaled_test[i] for i in y_test_pred_cluster
+        center_points_unscaled_test[i] for i in y_test_pred_fuzzy_set
     ]
 
     ## Recalculate percentage difference to actual values
@@ -466,4 +466,4 @@ def fit_calibrate_predict(
             prev_Y = test_set["Y"].iloc[i - 1]
             y_test_pred[i] = prev_Y + y_test_pred_center_point[i]
 
-    return y_test_pred_cluster, y_test_pred_center_point, y_test_pred
+    return y_test_pred_fuzzy_set, y_test_pred_center_point, y_test_pred

@@ -9,7 +9,7 @@ def visualize_partition(fp_df, center_points):
     plt.scatter(
         fp_df["X_value"],
         fp_df["membership_value"],
-        c=fp_df["cluster"].astype("category").cat.codes,
+        c=fp_df["fuzzy_set"].astype("category").cat.codes,
         cmap="viridis",
         s=50,
     )

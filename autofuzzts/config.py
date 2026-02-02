@@ -1,7 +1,7 @@
 # config.py
 
 DEFAULT_CONFIG = {
-    "n_clusters": 3,
+    "n_fuzzy_sets": 3,
     "number_of_lags": 5,
     "plot_partition": False,
     "pred_column": "Y",
