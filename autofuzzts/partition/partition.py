@@ -4,7 +4,7 @@ from typing import Union, Literal
 import warnings
 from sklearn.preprocessing import MinMaxScaler
 
-from autofuzzts.partition.fuzzy_clust_fun import (
+from autofuzzts.partition.fuzzy_part_fun import (
     fuzzy_partition_cosine,
     fuzzy_partition_triangle,
     fuzzy_partition_gauss,
