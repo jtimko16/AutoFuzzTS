@@ -3,6 +3,8 @@
 Time series forecasting library using fuzzy logic and automated machine learning.  
 Build and evaluate time series models automatically using fuzzy logic and AutoML techniques.
 
+The package is designed for academic benchmarking and controlled experimentation in one-step-ahead time-series forecasting. It assumes a fixed train/validation/test split and focuses on reproducible model comparison rather than real-time deployment.
+
 ## Installation
 
 ```bash
