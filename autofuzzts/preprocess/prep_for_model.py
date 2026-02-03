@@ -4,10 +4,10 @@ from sklearn.preprocessing import LabelEncoder
 
 def prepare_for_model(df: pd.DataFrame, number_of_lags: int):
     """
-    Prepare clustering data for modeling.
+    Prepare fuzzy partitioned data for modeling.
     
     Parameters:
-    - df (pd.DataFrame): The input DataFrame containing clustering data.
+    - df (pd.DataFrame): The input DataFrame containing fuzzy partitioned data.
     - number_of_lags (int): The number of lag features to create.
 
     Returns:
@@ -15,12 +15,12 @@ def prepare_for_model(df: pd.DataFrame, number_of_lags: int):
     - y_train (np.ndarray): Target variable for training the model.
     """
     
-    # Prepare the 'cluster' column
-    df.loc[:, "cluster"] = df["cluster"].str.replace("set_", "").astype(int).copy()
+    # Prepare the 'fuzzy_set' column
+    df.loc[:, "fuzzy_set"] = df["fuzzy_set"].str.replace("set_", "").astype(int).copy()
 
     # Create lagged features
     for i in range(1, number_of_lags + 1):
-        df.loc[:, "cluster_lag" + str(i)] = df["cluster"].shift(i).copy()
+        df.loc[:, "fuzzy_set_lag" + str(i)] = df["fuzzy_set"].shift(i).copy()
         df.loc[:, "membership_value_lag" + str(i)] = df["membership_value"].shift(i).copy()
         df.loc[:, "left_lag" + str(i)] = df["left"].shift(i).copy()
 
@@ -37,16 +37,16 @@ def prepare_for_model(df: pd.DataFrame, number_of_lags: int):
 
 
     # Separate target and features
-    y_train = df_model["cluster"]
-    X_train = df_model.drop(columns=["Y", "cluster"])
+    y_train = df_model["fuzzy_set"]
+    X_train = df_model.drop(columns=["Y", "fuzzy_set"])
 
     # Encode categorical columns
     label_encoder = LabelEncoder()
     encoded_cols = []
 
-    # Loop through columns and encode if they start with 'cluster_'
+    # Loop through columns and encode if they start with 'fuzzy_set_'
     for col in X_train.columns:
-        if col.startswith("cluster_"):
+        if col.startswith("fuzzy_set_"):
             X_train[col] = label_encoder.fit_transform(X_train[col])
             encoded_cols.append(col)
 

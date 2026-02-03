@@ -4,16 +4,16 @@ from typing import Union, Literal
 import warnings
 from sklearn.preprocessing import MinMaxScaler
 
-from autofuzzts.partition.fuzzy_clust_fun import (
+from autofuzzts.partition.fuzzy_part_fun import (
     fuzzy_partition_cosine,
     fuzzy_partition_triangle,
     fuzzy_partition_gauss,
 )
 
 class FuzzyPartition:
-    def __init__(self, fuzzy_function: Literal["cosine", "triangle", "gauss"], n_clusters: int, sigma: float, scaler: MinMaxScaler, verbosity: bool = False):
+    def __init__(self, fuzzy_function: Literal["cosine", "triangle", "gauss"], n_fuzzy_sets: int, sigma: float, scaler: MinMaxScaler, verbosity: bool = False):
         self.fuzzy_function = self._get_fuzzy_partition_func(fuzzy_function)
-        self.n_clusters = n_clusters
+        self.n_fuzzy_sets = n_fuzzy_sets
         self.sigma = sigma
         self.verbosity = verbosity
         self.scaler = scaler  
@@ -43,16 +43,16 @@ class FuzzyPartition:
         """
         # Perform fuzzy partitioning using the selected function
         if self.fuzzy_function.__name__ == "fuzzy_partition_gauss":
-            D, A = self.fuzzy_function(X=X, n=self.n_clusters, sigma=self.sigma)
+            D, A = self.fuzzy_function(X=X, n=self.n_fuzzy_sets, sigma=self.sigma)
         else:
-            D, A = self.fuzzy_function(X=X, n=self.n_clusters)
+            D, A = self.fuzzy_function(X=X, n=self.n_fuzzy_sets)
 
         center_points = list(D.flatten())
         center_points = [round(i, 2) for i in center_points]
         center_points = np.array(center_points)
 
         if self.verbosity:
-            print("Cluster center points:", center_points)
+            print("Fuzzy set center points:", center_points)
 
         # Unscaled center points
         center_points_unscaled = self.scaler.inverse_transform(
@@ -60,7 +60,7 @@ class FuzzyPartition:
         )
         self.center_points_unscaled = center_points_unscaled.flatten()
         if self.verbosity:
-            print("Cluster center points unscaled:", self.center_points_unscaled.flatten())
+            print("fuzzy_set center points unscaled:", self.center_points_unscaled.flatten())
 
         # Create a DataFrame for membership values
         A_df = pd.DataFrame(A)
@@ -70,7 +70,7 @@ class FuzzyPartition:
         fp_df = A_df.copy()
         fp_df.insert(0, "X_value", X)
         fp_df["membership_value"] = fp_df.iloc[:, 1:].max(axis=1)
-        fp_df["cluster"] = fp_df.iloc[:, 1:].idxmax(axis=1)
+        fp_df["fuzzy_set"] = fp_df.iloc[:, 1:].idxmax(axis=1)
 
         # Initialize 'left' and 'right' columns
         fp_df["left"] = 0
@@ -81,23 +81,23 @@ class FuzzyPartition:
         set_max = "set_" + str(len(center_points) - 1)
 
         # Set left and right for min and max sets
-        fp_df.loc[fp_df["cluster"] == set_min, "right"] = 1
-        fp_df.loc[fp_df["cluster"] == set_max, "left"] = 1
+        fp_df.loc[fp_df["fuzzy_set"] == set_min, "right"] = 1
+        fp_df.loc[fp_df["fuzzy_set"] == set_max, "left"] = 1
 
         fp_df["center_point"] = ""
-        fp_df.loc[fp_df["cluster"] == set_min, "center_point"] = 0
-        fp_df.loc[fp_df["cluster"] == set_max, "center_point"] = 1
+        fp_df.loc[fp_df["fuzzy_set"] == set_min, "center_point"] = 0
+        fp_df.loc[fp_df["fuzzy_set"] == set_max, "center_point"] = 1
 
-        # Logic for intermediate clusters
+        # Logic for intermediate fuzzy_sets
         for i in range(1, len(center_points) - 1):
             set_i = "set_" + str(i)
-            fp_df.loc[fp_df["cluster"] == set_i, "center_point"] = center_points[i]
+            fp_df.loc[fp_df["fuzzy_set"] == set_i, "center_point"] = center_points[i]
             fp_df.loc[
-                (fp_df["cluster"] == set_i) & (fp_df["X_value"] >= center_points[i]),
+                (fp_df["fuzzy_set"] == set_i) & (fp_df["X_value"] >= center_points[i]),
                 "right",
             ] = 1
             fp_df.loc[
-                (fp_df["cluster"] == set_i) & (fp_df["X_value"] < center_points[i]),
+                (fp_df["fuzzy_set"] == set_i) & (fp_df["X_value"] < center_points[i]),
                 "left",
             ] = 1
 
@@ -105,6 +105,6 @@ class FuzzyPartition:
         fp_df.loc[fp_df["membership_value"] < 0, "membership_value"] = 0
         
         # Keep only relevant columns
-        fp_df = fp_df.loc[:, ["X_value", "membership_value", "cluster", "left"]]
+        fp_df = fp_df.loc[:, ["X_value", "membership_value", "fuzzy_set", "left"]]
         
         return fp_df, center_points, center_points_unscaled.flatten()

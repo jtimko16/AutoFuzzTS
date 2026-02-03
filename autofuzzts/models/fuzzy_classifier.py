@@ -6,8 +6,8 @@ from sklearn.calibration import CalibratedClassifierCV
 
 
 class FuzzyPipelineModel:
-    def __init__(self, n_clusters: int, number_of_lags: int, verbosity: bool = False):
-        self.n_clusters = n_clusters
+    def __init__(self, n_fuzzy_sets: int, number_of_lags: int, verbosity: bool = False):
+        self.n_fuzzy_sets = n_fuzzy_sets
         self.number_of_lags = number_of_lags
         self.verbosity = verbosity
         self.model = None  # Placeholder for the fitted model
@@ -23,7 +23,7 @@ class FuzzyPipelineModel:
         - kwargs: Additional parameters for model fitting.
         """
         if model_type == 'xgb':
-            model = xgb.XGBClassifier(objective="multi:softmax", num_class=self.n_clusters, **kwargs)
+            model = xgb.XGBClassifier(objective="multi:softmax", num_class=self.n_fuzzy_sets, **kwargs)
             self.model = model.fit(X_train, y_train)
 
         elif model_type == 'tpot':

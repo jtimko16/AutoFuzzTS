@@ -18,10 +18,13 @@ pip install autofuzzts
 import pandas as pd
 
 # Load dataset into a pandas DataFrame
-data = pd.read_csv("../clean_data/ADBE_yf_hourly_cleaned.csv").head(240)
+data = pd.read_csv('../../data/sample_datasets/NYSE.csv')
+data.head(10)
+```
 
+```python
 # Select the target column to forecast
-data_column_name = "close_price"
+data_column_name = "Close"
 df = data[[data_column_name]].copy()
 
 # Split into train, validation, and test sets
@@ -53,7 +56,7 @@ print(f"Best configuration: {best_config}")
 
 **Example output:**
 ```
-Best configuration: {'n_clusters': 19, 'number_of_lags': 2, 'fuzzy_part_func': 'Triangle'}
+Best configuration: {'n_fuzzy_sets': 13, 'number_of_lags': 6, 'fuzzy_part_func': 'Cosine'}
 ```
 
 ---
