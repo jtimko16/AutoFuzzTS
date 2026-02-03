@@ -11,9 +11,9 @@ from autofuzzts.partition.fuzzy_part_fun import (
 )
 
 class FuzzyPartition:
-    def __init__(self, fuzzy_function: Literal["cosine", "triangle", "gauss"], n_fuzzy_set: int, sigma: float, scaler: MinMaxScaler, verbosity: bool = False):
+    def __init__(self, fuzzy_function: Literal["cosine", "triangle", "gauss"], n_fuzzy_sets: int, sigma: float, scaler: MinMaxScaler, verbosity: bool = False):
         self.fuzzy_function = self._get_fuzzy_partition_func(fuzzy_function)
-        self.n_fuzzy_set = n_fuzzy_set
+        self.n_fuzzy_sets = n_fuzzy_sets
         self.sigma = sigma
         self.verbosity = verbosity
         self.scaler = scaler  
@@ -43,9 +43,9 @@ class FuzzyPartition:
         """
         # Perform fuzzy partitioning using the selected function
         if self.fuzzy_function.__name__ == "fuzzy_partition_gauss":
-            D, A = self.fuzzy_function(X=X, n=self.n_fuzzy_set, sigma=self.sigma)
+            D, A = self.fuzzy_function(X=X, n=self.n_fuzzy_sets, sigma=self.sigma)
         else:
-            D, A = self.fuzzy_function(X=X, n=self.n_fuzzy_set)
+            D, A = self.fuzzy_function(X=X, n=self.n_fuzzy_sets)
 
         center_points = list(D.flatten())
         center_points = [round(i, 2) for i in center_points]
